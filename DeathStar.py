@@ -727,8 +727,9 @@ if __name__ == '__main__':
         formatter_class=RawTextHelpFormatter)
     args.add_argument('-u', '--username', type=str, default='empireadmin', help='Empire username (default: empireadmin)')
     args.add_argument('-p', '--password', type=str, default='Password123', help='Empire password (default: Password123)')
-    args.add_argument('-lip', '--listener-ip', type=str, help='IP for the DeathStar listener (Empire should auto detect the IP, if not use this flag)')
-    args.add_argument('-lp', '--listener-port', type=int, default=8443, metavar='PORT', help='Port to start the DeathStar listener on (default: 8443)')
+    args.add_argument('-lh', '--listener-host', type=str, help='Host for the DeathStar listener')
+    args.add_argument('-lp', '--listener-port', type=int, default=443, metavar='PORT', help='Port to start the DeathStar listener on (default: 443)')
+    args.add_argument('-lip', '--listener-bindip', type=int, help='Local IP to bind the DeathStar listener to')
     args.add_argument('-t', '--threads', type=int, default=20, help='Specifies the number of threads for modules to use (default: 20)')
     args.add_argument('--no-mimikatz', action='store_true', help='Do not use Mimikatz during lateral movement (default: False)')
     args.add_argument('--no-domain-privesc', action='store_true', help='Do not use domain privilege escalation techniques (default: False)')
@@ -766,8 +767,11 @@ if __name__ == '__main__':
 
     if not get_listener_by_name():
         listener_opts = {'CertPath': 'data/', 'Name': 'DeathStar', 'Port': args.listener_port}
-        if args.listener_ip:
-            listener_opts['Host'] = args.listener_ip
+        if args.listener_host:
+            listener_opts['Host'] = args.listener_host
+
+        if args.listener_bindip:
+            listener_opts['BindIP'] = args.listener_bindip
 
         start_listener(listener_opts)
 
